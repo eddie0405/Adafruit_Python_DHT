@@ -19,17 +19,16 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-import Adafruit_DHT
-import time
 import sys
+import time
 import httplib, urllib
 import json
+import Adafruit_DHT
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 deviceId = "DizT5fTF"
-deviceKey = "r30s2nKGqvMc26ni"
+deviceKey = "r30s2nKGqvMc26ni" 
 def post_to_mcs(payload): 
 	headers = {"Content-type": "application/json", "deviceKey": deviceKey} 
 	not_connected = 1 
@@ -40,25 +39,26 @@ def post_to_mcs(payload):
 			not_connected = 0 
 		except (httplib.HTTPException, socket.error) as ex: 
 			print "Error: %s" % ex
-			time.sleep(10) # sleep 10 seconds
-
+			time.sleep(1) # sleep 10 seconds
+ 
 	conn.request("POST", "/mcs/v2/devices/" + deviceId + "/datapoints", json.dumps(payload), headers) 
 	response = conn.getresponse() 
 	print( response.status, response.reason, json.dumps(payload), time.strftime("%c")) 
 	data = response.read() 
 	conn.close() 
-	
+
+
 # Parse command line parameters.
 sensor_args = { '11': Adafruit_DHT.DHT11,
-        	 '22': Adafruit_DHT.DHT22,
+                '22': Adafruit_DHT.DHT22,
                 '2302': Adafruit_DHT.AM2302 }
 if len(sys.argv) == 3 and sys.argv[1] in sensor_args:
-    	sensor = sensor_args[sys.argv[1]]
-    	pin = sys.argv[2]
+    sensor = sensor_args[sys.argv[1]]
+    pin = sys.argv[2]
 else:
-   	print('usage: sudo ./Adafruit_DHT.py [11|22|2302] GPIOpin#')
-  	print('example: sudo ./Adafruit_DHT.py 2302 4 - Read from an AM2302 connected to GPIO #4')
-    	sys.exit(1)
+    print('usage: sudo ./Adafruit_DHT.py [11|22|2302] GPIOpin#')
+    print('example: sudo ./Adafruit_DHT.py 2302 4 - Read from an AM2302 connected to GPIO #4')
+    sys.exit(1)
 
 # Try to grab a sensor reading.  Use the read_retry method which will retry up
 # to 15 times to get a sensor reading (waiting 2 seconds between each retry).
@@ -72,7 +72,7 @@ else:
 # guarantee the timing of calls to read the sensor).
 # If this happens try again!
 while 1:
-
+	
 	humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 	SwitchStatus = GPIO.input(24)
 	h0, t0= Adafruit_DHT.read_retry(sensor, pin)
